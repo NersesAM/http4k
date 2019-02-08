@@ -48,7 +48,7 @@ data class ContractRoutingHttpHandler(private val renderer: ContractRenderer,
     private val notFound = preSecurityFilter.then(security?.filter
         ?: Filter.NoOp).then(postSecurityFilter).then { renderer.notFound() }
 
-    private val handler: HttpHandler = {
+    private val handler = HttpHandler {
         when (val matchResult = match(it)) {
             is MatchingHandler -> matchResult(it)
             is MethodNotMatched -> notFound(it)
@@ -109,7 +109,7 @@ data class ContractRoutingHttpHandler(private val renderer: ContractRenderer,
 
 internal class PreFlightExtractionFilter(meta: RouteMeta, preFlightExtraction: PreFlightExtraction) : Filter {
     private val preFlightChecks = (meta.preFlightExtraction ?: preFlightExtraction)(meta).toTypedArray()
-    override fun invoke(next: HttpHandler): HttpHandler = {
+    override fun invoke(next: HttpHandler) = HttpHandler {
         when (it.method) {
             OPTIONS -> next(it)
             else -> {

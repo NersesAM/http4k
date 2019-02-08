@@ -27,7 +27,7 @@ class OAuthRedirectionFilter(
     private val redirectionBuilder: RedirectionUriBuilder = defaultUriBuilder
 ) : Filter {
 
-    override fun invoke(next: HttpHandler): HttpHandler = {
+    override fun invoke(next: HttpHandler) = HttpHandler {
         if (oAuthPersistence.retrieveToken(it) != null) next(it) else {
             val csrf = generateCrsf()
             val state = State(listOf("csrf" to csrf.value, "uri" to it.uri.toString()).toUrlFormEncoded())

@@ -5,7 +5,7 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.core.Body
 import org.http4k.core.Credentials
-import org.http4k.core.Request
+import org.http4k.core.HttpHandler
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.http4k.core.Status.Companion.OK
@@ -34,7 +34,7 @@ internal class AccessTokenFetcherTest {
 
     @Test
     fun `can get access token from plain text body`() {
-        val api = { _: Request -> Response(OK).body("some-access-token") }
+        val api = HttpHandler { Response(OK).body("some-access-token") }
 
         val fetcher = AccessTokenFetcher(api, Uri.of("irrelevant"), config, accessTokenFetcherAuthenticator)
 
@@ -44,7 +44,7 @@ internal class AccessTokenFetcherTest {
     @Test
     fun `can get access token from json body`() {
         //see https://tools.ietf.org/html/rfc6749#section-4.1.4
-        val api = { _: Request -> Response(OK).with(accessTokenResponseBody of AccessTokenResponse("some-access-token")) }
+        val api = HttpHandler { Response(OK).with(accessTokenResponseBody of AccessTokenResponse("some-access-token")) }
 
         val fetcher = AccessTokenFetcher(api, Uri.of("irrelevant"), config, accessTokenFetcherAuthenticator)
 
@@ -79,7 +79,7 @@ internal class AccessTokenFetcherTest {
 
     @Test
     fun `handle non-successful response`() {
-        val api = { _: Request -> Response(BAD_REQUEST) }
+        val api = HttpHandler { Response(BAD_REQUEST) }
 
         val fetcher = AccessTokenFetcher(api, Uri.of("irrelevant"), config, accessTokenFetcherAuthenticator)
 

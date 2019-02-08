@@ -2,6 +2,7 @@ package org.http4k.routing
 
 import org.http4k.core.Body
 import org.http4k.core.Filter
+import org.http4k.core.HandleRequest
 import org.http4k.core.Headers
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method
@@ -84,6 +85,8 @@ infix fun String.bind(method: Method): PathMethod = PathMethod(this, method)
 infix fun String.bind(httpHandler: RoutingHttpHandler): RoutingHttpHandler = httpHandler.withBasePath(this)
 
 infix fun String.bind(action: HttpHandler): RoutingHttpHandler = TemplateRoutingHttpHandler(null, UriTemplate.from(this), action)
+
+infix fun String.bind(fn: HandleRequest): RoutingHttpHandler = bind(HttpHandler(fn))
 
 infix fun String.bind(consumer: WsConsumer): RoutingWsHandler = TemplateRoutingWsHandler(UriTemplate.from(this), consumer)
 
