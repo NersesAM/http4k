@@ -103,7 +103,7 @@ class ContractRouteTest {
 
     @Test
     fun `route as HttpHandler matches as expected`() {
-        val route = Path.int().of("value") meta {} bindContract GET to { { _: Request -> Response(OK) } }
+        val route = Path.int().of("value") meta {} bindContract GET to { HttpHandler { Response(OK) } }
 
         assertThat(route(Request(GET, "/1")), hasStatus(OK))
         assertThat(route(Request(DELETE, "/1")), hasStatus(NOT_FOUND))
@@ -114,7 +114,7 @@ class ContractRouteTest {
     fun `route as HttpHandler validates security of route`() {
         val route = Path.int().of("value") meta {
             security = ApiKeySecurity(Query.required("foo"), { true })
-        } bindContract GET to { { _: Request -> Response(OK) } }
+        } bindContract GET to { HttpHandler { Response(OK) } }
         assertThat(route(Request(GET, "/1")), hasStatus(UNAUTHORIZED))
         assertThat(route(Request(GET, "/1").query("foo", "bar")), hasStatus(OK))
     }
@@ -123,7 +123,7 @@ class ContractRouteTest {
     fun `route as HttpHandler performs pre-extraction of route`() {
         val route = Path.int().of("value") meta {
             queries += Query.required("foo")
-        } bindContract GET to { { _: Request -> Response(OK) } }
+        } bindContract GET to { HttpHandler { Response(OK) } }
         assertThat(route(Request(GET, "/1")), hasStatus(BAD_REQUEST))
         assertThat(route(Request(GET, "/1").query("foo", "bar")), hasStatus(OK))
     }
@@ -180,7 +180,7 @@ class ContractRouteTest {
     @Test
     fun `7 parts - matches route`() {
         fun matched(value1: String, value2: String, value3: String, value4: String, value5: String, value6: String,
-                    value7: String) =HttpHandler  {
+                    value7: String) = HttpHandler {
             Response(OK).body(value1 + value2 + value3 + value4 +
                 value5 + value6 + value7)
         }
@@ -194,7 +194,7 @@ class ContractRouteTest {
     @Test
     fun `8 parts - matches route`() {
         fun matched(value1: String, value2: String, value3: String, value4: String, value5: String, value6: String,
-                    value7: String, value8: String) =HttpHandler  {
+                    value7: String, value8: String) = HttpHandler {
             Response(OK).body(value1 + value2 +
                 value3 + value4 + value5 + value6 + value7 + value8)
         }
@@ -208,7 +208,7 @@ class ContractRouteTest {
     @Test
     fun `9 parts - matches route`() {
         fun matched(value1: String, value2: String, value3: String, value4: String, value5: String, value6: String,
-                    value7: String, value8: String, value9: String) =HttpHandler  {
+                    value7: String, value8: String, value9: String) = HttpHandler {
             Response(OK).body(value1 +
                 value2 + value3 + value4 + value5 + value6 + value7 + value8 + value9)
         }
@@ -223,7 +223,7 @@ class ContractRouteTest {
     @Test
     fun `10 parts - matches route`() {
         fun matched(value1: String, value2: String, value3: String, value4: String, value5: String, value6: String,
-                    value7: String, value8: String, value9: String, value10: String) =HttpHandler  {
+                    value7: String, value8: String, value9: String, value10: String) = HttpHandler {
             Response(OK)
                 .body(value1 + value2 + value3 + value4 + value5 + value6 + value7 + value8 + value9 + value10)
         }
