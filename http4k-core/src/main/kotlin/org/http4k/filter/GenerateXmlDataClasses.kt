@@ -4,8 +4,8 @@ import org.http4k.core.Filter
 import org.http4k.core.HttpHandler
 import org.http4k.core.then
 import org.http4k.core.with
+import org.http4k.format.AutoMarshallingJson
 import org.http4k.format.AutoMarshallingXml
-import org.http4k.format.JsonLibAutoMarshallingJson
 import java.io.PrintStream
 
 /**
@@ -14,7 +14,7 @@ import java.io.PrintStream
  * have different fields).
  */
 class GenerateXmlDataClasses<NODE : Any>(
-    json: JsonLibAutoMarshallingJson<NODE>,
+    json: AutoMarshallingJson<NODE>,
     xml: AutoMarshallingXml,
     out: PrintStream = System.out,
     idGenerator: () -> Int = { Math.abs(java.util.Random().nextInt()) }) : Filter {
