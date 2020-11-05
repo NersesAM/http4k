@@ -19,7 +19,7 @@ class GenerateXmlDataClasses<NODE : Any>(
     out: PrintStream = System.out,
     idGenerator: () -> Int = { Math.abs(java.util.Random().nextInt()) }) : Filter {
     private val chains = GenerateDataClasses(json, out, idGenerator).then(Filter { next ->
-        {
+        HttpHandler {
             next(it).run { with(json.body().toLens() of json.asJsonObject(xml.asA(bodyString(), Map::class))) }
         }
     })

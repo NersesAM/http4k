@@ -18,7 +18,7 @@ internal data class TemplateRoutingHttpHandler(
     override fun match(request: Request): RouterMatch =
         if (template.matches(request.uri.path)) {
             when (method) {
-                null, request.method -> RouterMatch.MatchingHandler { RoutedResponse(httpHandler(RoutedRequest(it, template)), template) }
+                null, request.method -> RouterMatch.MatchingHandler(HttpHandler { RoutedResponse(httpHandler(RoutedRequest(it, template)), template) })
                 else -> RouterMatch.MethodNotMatched
             }
         } else RouterMatch.Unmatched
