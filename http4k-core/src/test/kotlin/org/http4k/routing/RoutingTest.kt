@@ -3,6 +3,7 @@ package org.http4k.routing
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.http4k.core.Filter
+import org.http4k.core.HttpHandler
 import org.http4k.core.Method
 import org.http4k.core.Method.GET
 import org.http4k.core.Method.POST
@@ -201,7 +202,7 @@ class RoutingTest {
 
         var count = 0
         val filter = Filter { next ->
-            {
+            HttpHandler {
                 next(it.replaceHeader("header", "value" + count++))
             }
         }
@@ -242,7 +243,7 @@ class RoutingTest {
     @Test
     fun `can add filter to router`() {
         val changePathFilter = Filter { next ->
-            { next(it.uri(it.uri.path("/svc/mybob.xml"))) }
+            HttpHandler { next(it.uri(it.uri.path("/svc/mybob.xml"))) }
         }
         val handler = "/svc" bind changePathFilter.then(static())
         val req = Request(GET, Uri.of("/svc/notmybob.xml"))
@@ -252,7 +253,7 @@ class RoutingTest {
     @Test
     fun `can add filter to a RoutingHttpHandler`() {
         val changePathFilter = Filter { next ->
-            { next(it.uri(it.uri.path("/svc/mybob.xml"))) }
+            HttpHandler { next(it.uri(it.uri.path("/svc/mybob.xml"))) }
         }
         val handler = changePathFilter.then("/svc" bind static())
         val req = Request(GET, Uri.of("/svc/notmybob.xml"))
@@ -261,7 +262,7 @@ class RoutingTest {
 
     @Test
     fun `can apply a filter to a RoutingHttpHandler`() {
-        val routes = Filter { next -> { next(it.header("name", "value")) } }
+        val routes = Filter { next -> HttpHandler { next(it.header("name", "value")) } }
             .then { Response(OK).body(it.header("name")!!) }
 
         val routingHttpHandler = routes(
@@ -272,7 +273,7 @@ class RoutingTest {
 
     @Test
     fun `RoutingHttpHandler with filters also applies when route is not found`() {
-        val filter = Filter { next -> { next(it).body("value") } }
+        val filter = Filter { next -> HttpHandler { next(it).body("value") } }
 
         val routingHttpHandler = filter.then(routes(
             "/a/thing" bind GET to { Response(OK) }
@@ -283,7 +284,7 @@ class RoutingTest {
 
     @Test
     fun `can apply a filter to a Router`() {
-        val routes = Filter { next -> { next(it.header("name", "value")) } }
+        val routes = Filter { next -> HttpHandler { next(it.header("name", "value")) } }
             .then(routes(
                 "/a/thing" bind GET to { Response(OK).body(it.header("name")!!) }
             ))

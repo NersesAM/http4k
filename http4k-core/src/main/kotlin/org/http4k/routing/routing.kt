@@ -66,6 +66,7 @@ fun Request.path(name: String): String? = when (this) {
 }
 
 data class PathMethod(val path: String, val method: Method?) {
+    infix fun to(action: HandleRequest): RoutingHttpHandler = to(HttpHandler(action))
     infix fun to(action: HttpHandler): RoutingHttpHandler =
         when (action) {
             is StaticRoutingHttpHandler -> action.withBasePath(path).let {

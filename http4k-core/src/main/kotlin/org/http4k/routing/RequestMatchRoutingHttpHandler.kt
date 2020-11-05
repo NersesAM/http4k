@@ -1,6 +1,7 @@
 package org.http4k.routing
 
 import org.http4k.core.Filter
+import org.http4k.core.HandleRequest
 import org.http4k.core.HttpHandler
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -28,6 +29,7 @@ fun hostDemux(head: Pair<String, RoutingHttpHandler>, vararg tail: Pair<String, 
     return routes(*hostHandlerPairs.map { { req: Request -> req.header("host") == it.first } bind it.second }.toTypedArray())
 }
 
+infix fun RequestMatch.bind(handler: HandleRequest): RoutingHttpHandler = bind(HttpHandler(handler))
 infix fun RequestMatch.bind(handler: HttpHandler): RoutingHttpHandler = PredicatedHandler(this, handler)
 infix fun RequestMatch.bind(handler: RoutingHttpHandler): RoutingHttpHandler = RequestMatchRoutingHttpHandler(this, handler)
 infix fun RequestMatch.and(that: RequestMatch): RequestMatch = { listOf(this, that).fold(true) { acc, next -> acc && next(it) } }

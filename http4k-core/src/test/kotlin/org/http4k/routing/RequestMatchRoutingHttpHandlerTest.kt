@@ -20,7 +20,7 @@ class RequestMatchRoutingHttpHandlerTest : RoutingHttpHandlerContract() {
         val criteria = present(hasStatus(OK).and(hasBody("somevalue")))
 
         val handler = routes("/{foobar}" bind GET to routes(headers("host") bind {
-            Response(OK).body(it.path("foobar") ?: "")
+        Response(OK).body(it.path("foobar") ?: "")
         }))
 
         val req = Request(GET, "/somevalue").header("host", "host")

@@ -58,7 +58,7 @@ class BootstrapAppLoaderTest {
 }
 
 private object TestAppWithContexts : AppLoaderWithContexts {
-    override fun invoke(env: Map<String, String>, contexts: RequestContexts): HttpHandler = { request ->
+    override fun invoke(env: Map<String, String>, contexts: RequestContexts) = HttpHandler { request ->
         val lambdaContext: Context? = contexts[request][LAMBDA_CONTEXT_KEY]
         val lambdaRequest: APIGatewayProxyRequestEvent? = contexts[request][LAMBDA_REQUEST_KEY]
 
@@ -74,7 +74,7 @@ private object TestAppWithContexts : AppLoaderWithContexts {
 }
 
 private object TestApp : AppLoader {
-    override fun invoke(env: Map<String, String>): HttpHandler = { request ->
+    override fun invoke(env: Map<String, String>) = HttpHandler { request ->
         env.toList().fold(Response(Status.CREATED)) { memo, (key, value) ->
             memo.header(key, value)
         }.body(request.removeHeader("x-http4k-context").toString())

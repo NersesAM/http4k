@@ -1,7 +1,7 @@
 package org.http4k.routing
 
 import com.natpryce.hamkrest.assertion.assertThat
-import org.http4k.core.Filter
+import org.http4k.core.HttpHandler
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -34,11 +34,11 @@ class HostDemuxRoutingHttpHandlerContract : RoutingHttpHandlerContract() {
 
     @Test
     fun `with filter`() {
-        val handler2 = otherHandler.withFilter(Filter { next ->
-            {
+        val handler2 = otherHandler.withFilter { next ->
+            HttpHandler {
                 next(it.replaceHeader("host", "foobar"))
             }
-        })
+        }
         assertThat(handler2(requestWithHost("host1", "/foo")), hasBody("host1foobar"))
         assertThat(handler2(requestWithHost("host2", "/foo")), hasBody("host2foobar"))
         assertThat(handler2(Request(GET, "")), hasStatus(NOT_FOUND))
